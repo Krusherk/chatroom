@@ -5,38 +5,957 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRACKED DEVS Chat</title>
     <script src="https://cdn.multisynq.io/multisynq-client-0.9.4.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #7dd3fc;
+            --text: #f1f5f9;
+            --highlight: #0ea5e9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(125, 211, 252, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(125, 211, 252, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .session-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-count {
+            background: rgba(15, 23, 42, 0.7);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .session-badge {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .session-badge:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background: rgba(15, 23, 42, 0.7);
+            border-right: 1px solid rgba(125, 211, 252, 0.2);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s ease;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border-radius: 30px;
+            border: 2px solid var(--accent);
+            background: rgba(30, 41, 59, 0.7);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent);
+        }
+
+        .room-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .room-list h3 {
+            margin-bottom: 15px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-item {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: rgba(30, 41, 59, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid var(--accent);
+        }
+
+        .room-item:hover {
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateX(5px);
+        }
+
+        .room-item.active {
+            background: rgba(30, 41, 59, 0.9);
+            border-left: 3px solid var(--purple);
+        }
+
+        .room-item h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .room-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+
+        .create-room-btn {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .create-room-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        /* Chat Area Styles */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .chat-header {
+            padding: 0 0 20px 0;
+            border-bottom: 1px solid rgba(125, 211, 252, 0.2);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h2 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 15px;
+            border-radius: 15px;
+            animation: fadeIn 0.4s ease;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--highlight), #0284c7);
+            border-bottom-right-radius: 5px;
+        }
+
+        .other-message {
+            align-self: flex-start;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--accent);
+            border-bottom-left-radius: 5px;
+        }
+
+        .system-message {
+            align-self: center;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid var(--purple);
+            text-align: center;
+            max-width: 70%;
+            padding: 10px 20px;
+        }
+
+        .message-username {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-text {
+            line-height: 1.5;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            text-align: right;
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 15px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(125, 211, 252, 0.2);
+        }
+
+        .chat-input-container input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: 2px solid var(--accent);
+            background: rgba(30, 41, 59, 0.7);
+            color: var(--text);
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .chat-input-container input:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .send-button {
+            padding: 0 30px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, var(--highlight), #0284c7);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4);
+        }
+
+        /* User List Styles */
+        .user-list {
+            width: 250px;
+            background: rgba(15, 23, 42, 0.7);
+            border-left: 1px solid rgba(125, 211, 252, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .user-list h3 {
+            margin-bottom: 20px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: rgba(30, 41, 59, 0.5);
+            transition: all 0.3s;
+        }
+
+        .user-item:hover {
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateX(-3px);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--pink), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .user-status {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--accent);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            padding: 1.2rem;
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 2px solid var(--accent);
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        /* Onboarding Screens */
+        .onboarding {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            z-index: 100;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .onboarding.hidden {
+            transform: translateY(-100%);
+        }
+
+        .onboarding-content {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(125, 211, 252, 0.3);
+            text-align: center;
+        }
+
+        .onboarding h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .onboarding p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: 2px solid var(--accent);
+            background: rgba(15, 23, 42, 0.7);
+            color: var(--text);
+            font-size: 1.1rem;
+            outline: none;
+            text-align: center;
+        }
+
+        .input-group input:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, var(--highlight), var(--purple));
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(2, 132, 199, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .user-list {
+                display: none;
+            }
+            
+            .sidebar {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                height: 95vh;
+            }
+            
+            .sidebar {
+                position: absolute;
+                left: -300px;
+                height: 100%;
+                z-index: 20;
+                background: rgba(15, 23, 42, 0.95);
+            }
+            
+            .sidebar.active {
+                transform: translateX(300px);
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>CRACKED DEVS</h1>
-    </header>
+    <div class="app-container">
+        <!-- Onboarding Screens -->
+        <div class="onboarding" id="onboarding">
+            <div class="onboarding-content">
+                <h2>CRACKED DEVS</h2>
+                <p>Welcome to the ultimate developer chat experience. Connect with fellow developers in real-time!</p>
+                
+                <div id="usernameScreen">
+                    <div class="input-group">
+                        <input type="text" id="usernameInput" placeholder="Choose your username" autocomplete="off">
+                    </div>
+                    <button class="btn" id="setUsernameBtn">
+                        <i class="fas fa-check"></i> Continue to Chat
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    <main>
-        <div class="session-info">
-            <div id="sessionBadge"></div>
-            <div id="userCount">0 users online</div>
+        <!-- Main App Interface (hidden initially) -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-terminal floating"></i>
+                <h1>CRACKED DEVS</h1>
+            </div>
+            <div class="session-info">
+                <div class="user-count">
+                    <i class="fas fa-users"></i>
+                    <span id="userCount">0 users</span>
+                </div>
+                <div class="session-badge">
+                    <i class="fas fa-qrcode"></i>
+                    <span id="sessionCode">DEV-ROOM</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search users or messages...">
+                </div>
+                
+                <div class="room-list">
+                    <h3><i class="fas fa-door-open"></i> Chat Rooms</h3>
+                    <div class="room-item active">
+                        <h4><i class="fas fa-hashtag"></i> General</h4>
+                        <div class="room-stats">
+                            <span><i class="fas fa-users"></i> 12 members</span>
+                            <span><i class="fas fa-comment"></i> 128</span>
+                        </div>
+                    </div>
+                    <div class="room-item">
+                        <h4><i class="fas fa-hashtag"></i> JavaScript</h4>
+                        <div class="room-stats">
+                            <span><i class="fas fa-users"></i> 8 members</span>
+                            <span><i class="fas fa-comment"></i> 42</span>
+                        </div>
+                    </div>
+                    <div class="room-item">
+                        <h4><i class="fas fa-hashtag"></i> Python</h4>
+                        <div class="room-stats">
+                            <span><i class="fas fa-users"></i> 6 members</span>
+                            <span><i class="fas fa-comment"></i> 27</span>
+                        </div>
+                    </div>
+                    <div class="room-item">
+                        <h4><i class="fas fa-hashtag"></i> Web Design</h4>
+                        <div class="room-stats">
+                            <span><i class="fas fa-users"></i> 5 members</span>
+                            <span><i class="fas fa-comment"></i> 19</span>
+                        </div>
+                    </div>
+                    <div class="room-item">
+                        <h4><i class="fas fa-hashtag"></i> DevOps</h4>
+                        <div class="room-stats">
+                            <span><i class="fas fa-users"></i> 7 members</span>
+                            <span><i class="fas fa-comment"></i> 35</span>
+                        </div>
+                    </div>
+                    
+                    <button class="create-room-btn">
+                        <i class="fas fa-plus"></i> Create New Room
+                    </button>
+                </div>
+            </div>
+            
+            <div class="chat-area">
+                <div class="chat-header">
+                    <h2><i class="fas fa-hashtag"></i> General Chat</h2>
+                    <div class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+                
+                <div class="chat-history" id="chatHistory">
+                    <!-- Messages will be inserted here -->
+                </div>
+                
+                <div class="chat-input-container">
+                    <input type="text" id="messageInput" placeholder="Type your message...">
+                    <button class="send-button" id="sendButton">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+            
+            <div class="user-list">
+                <h3><i class="fas fa-users"></i> Online Users</h3>
+                <div class="user-item">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <div class="user-name">JohnDev</div>
+                        <div class="user-status">
+                            <div class="status-indicator"></div>
+                            Online
+                        </div>
+                    </div>
+                </div>
+                <div class="user-item">
+                    <div class="user-avatar">SC</div>
+                    <div class="user-info">
+                        <div class="user-name">SarahCoder</div>
+                        <div class="user-status">
+                            <div class="status-indicator"></div>
+                            Online
+                        </div>
+                    </div>
+                </div>
+                <div class="user-item">
+                    <div class="user-avatar">MJ</div>
+                    <div class="user-info">
+                        <div class="user-name">MikeJS</div>
+                        <div class="user-status">
+                            <div class="status-indicator"></div>
+                            Online
+                        </div>
+                    </div>
+                </div>
+                <div class="user-item">
+                    <div class="user-avatar">AP</div>
+                    <div class="user-info">
+                        <div class="user-name">AlexPy</div>
+                        <div class="user-status">
+                            <div class="status-indicator"></div>
+                            Online
+                        </div>
+                    </div>
+                </div>
+                <div class="user-item">
+                    <div class="user-avatar">CR</div>
+                    <div class="user-info">
+                        <div class="user-name">CrackedDev</div>
+                        <div class="user-status">
+                            <div class="status-indicator"></div>
+                            Online
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div class="chat-container">
-            <div id="chatHistory" class="chat-history"></div>
-            
-            <div class="user-controls">
-                <input type="text" id="usernameInput" placeholder="Choose your username">
-                <button id="setUsername">Set Name</button>
-            </div>
-            
-            <div class="message-input">
-                <input type="text" id="messageInput" placeholder="Type your message..." disabled>
-                <button id="sendButton" disabled>Send</button>
-            </div>
-        </div>
-    </main>
+        <footer>
+            made by crack
+        </footer>
+    </div>
 
-    <footer>
-        made by crack
-    </footer>
-
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const onboarding = document.getElementById('onboarding');
+            const usernameInput = document.getElementById('usernameInput');
+            const setUsernameBtn = document.getElementById('setUsernameBtn');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const chatHistory = document.getElementById('chatHistory');
+            const userCount = document.getElementById('userCount');
+            const sessionCode = document.getElementById('sessionCode');
+            const searchInput = document.getElementById('searchInput');
+            
+            // Sample chat rooms
+            const rooms = [
+                { id: 1, name: "General", members: 12, messages: 128 },
+                { id: 2, name: "JavaScript", members: 8, messages: 42 },
+                { id: 3, name: "Python", members: 6, messages: 27 },
+                { id: 4, name: "Web Design", members: 5, messages: 19 },
+                { id: 5, name: "DevOps", members: 7, messages: 35 }
+            ];
+            
+            // Sample users
+            const users = [
+                { id: 1, name: "JohnDev", avatar: "JD", status: "online" },
+                { id: 2, name: "SarahCoder", avatar: "SC", status: "online" },
+                { id: 3, name: "MikeJS", avatar: "MJ", status: "online" },
+                { id: 4, name: "AlexPy", avatar: "AP", status: "online" },
+                { id: 5, name: "CrackedDev", avatar: "CR", status: "online" }
+            ];
+            
+            // Current user
+            let currentUser = {
+                name: "",
+                avatar: ""
+            };
+            
+            // Set username
+            setUsernameBtn.addEventListener('click', function() {
+                const username = usernameInput.value.trim();
+                if (username) {
+                    currentUser.name = username;
+                    currentUser.avatar = username.substring(0, 2).toUpperCase();
+                    
+                    // Hide onboarding and show chat interface
+                    onboarding.classList.add('hidden');
+                    
+                    // Generate random session code
+                    const code = generateSessionCode();
+                    sessionCode.textContent = code;
+                    
+                    // Set user count
+                    userCount.textContent = users.length + " users";
+                    
+                    // Add welcome message
+                    addSystemMessage(`Welcome to CRACKED DEVS, ${username}! Start chatting now.`);
+                    
+                    // Focus on message input
+                    messageInput.focus();
+                } else {
+                    usernameInput.focus();
+                    usernameInput.placeholder = "Please enter a username!";
+                }
+            });
+            
+            // Send message
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (message) {
+                    addMessage(currentUser, message, true);
+                    messageInput.value = "";
+                    messageInput.focus();
+                    
+                    // Simulate responses
+                    setTimeout(() => {
+                        const randomUser = users[Math.floor(Math.random() * users.length)];
+                        const responses = [
+                            "Interesting! What do you think about the new framework updates?",
+                            "I've been working on something similar. We should collaborate!",
+                            "That's a great point. Have you considered the performance implications?",
+                            "I've encountered that issue before. The solution is to clear cache.",
+                            "Check out the documentation for that, it has some great examples.",
+                            "We should schedule a meeting to discuss this further."
+                        ];
+                        const response = responses[Math.floor(Math.random() * responses.length)];
+                        addMessage(randomUser, response, false);
+                    }, 1000 + Math.random() * 2000);
+                }
+            }
+            
+            // Send button click
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Enter key support
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = searchInput.value.toLowerCase();
+                if (searchTerm) {
+                    // In a real app, this would filter messages or users
+                    console.log("Searching for:", searchTerm);
+                }
+            });
+            
+            // Create room button
+            document.querySelector('.create-room-btn').addEventListener('click', function() {
+                const newRoom = {
+                    id: rooms.length + 1,
+                    name: `Room ${rooms.length + 1}`,
+                    members: 1,
+                    messages: 0
+                };
+                rooms.push(newRoom);
+                
+                // Add room to list
+                const roomList = document.querySelector('.room-list');
+                const roomItem = document.createElement('div');
+                roomItem.className = 'room-item';
+                roomItem.innerHTML = `
+                    <h4><i class="fas fa-hashtag"></i> ${newRoom.name}</h4>
+                    <div class="room-stats">
+                        <span><i class="fas fa-users"></i> ${newRoom.members} members</span>
+                        <span><i class="fas fa-comment"></i> ${newRoom.messages}</span>
+                    </div>
+                `;
+                roomList.insertBefore(roomItem, document.querySelector('.create-room-btn'));
+                
+                // Alert user
+                addSystemMessage(`Created new room: ${newRoom.name}`);
+            });
+            
+            // Add message to chat
+            function addMessage(user, text, isCurrentUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isCurrentUser ? 'user-message' : 'other-message'}`;
+                
+                const now = new Date();
+                const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                             now.getMinutes().toString().padStart(2, '0');
+                
+                messageDiv.innerHTML = `
+                    <div class="message-username">
+                        <i class="fas fa-user"></i>${user.name}
+                    </div>
+                    <div class="message-text">${text}</div>
+                    <div class="message-time">${time}</div>
+                `;
+                
+                chatHistory.appendChild(messageDiv);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+            
+            // Add system message
+            function addSystemMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message system-message';
+                messageDiv.innerHTML = `<div class="message-text">${text}</div>`;
+                chatHistory.appendChild(messageDiv);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+            
+            // Generate session code
+            function generateSessionCode() {
+                const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+                const numbers = '23456789';
+                let code = '';
+                
+                for (let i = 0; i < 2; i++) {
+                    code += letters.charAt(Math.floor(Math.random() * letters.length));
+                }
+                
+                code += '-';
+                
+                for (let i = 0; i < 4; i++) {
+                    code += numbers.charAt(Math.floor(Math.random() * numbers.length));
+                }
+                
+                return code;
+            }
+            
+            // Add some initial messages
+            function initializeChat() {
+                setTimeout(() => {
+                    addSystemMessage("Welcome to CRACKED DEVS chat! Type a message to get started.");
+                    addSystemMessage("There are 5 users online now.");
+                    
+                    setTimeout(() => {
+                        addMessage(users[0], "Hey everyone, how's it going? Just pushed the latest update to the repo.", false);
+                        
+                        setTimeout(() => {
+                            addMessage(users[1], "Nice! I'll check it out. Did you fix the responsive issues on mobile?", false);
+                            
+                            setTimeout(() => {
+                                addMessage(users[4], "The mobile issues should be resolved in this version. Let me know if you find anything!", false);
+                            }, 1000);
+                        }, 1500);
+                    }, 1000);
+                }, 500);
+            }
+            
+            // Initialize chat after onboarding
+            if (!onboarding.classList.contains('hidden')) {
+                setTimeout(initializeChat, 1000);
+            }
+        });
+    </script>
 </body>
 </html>
