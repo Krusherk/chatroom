@@ -1,0 +1,79 @@
+body {
+  margin: 0;
+  background: #1e1e2f;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+#chat-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+#chat {
+  width: 600px;
+  background: #2b2b3c;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+#users {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+#messages {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: #1f1f2f;
+  border-radius: 8px;
+}
+
+.bubble {
+  background: #3e3e55;
+  padding: 8px 12px;
+  margin-bottom: 5px;
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+input[type="text"] {
+  width: 80%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #262637;
+  color: white;
+}
+
+#send-btn {
+  width: 18%;
+  padding: 10px;
+  background: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#send-btn:hover {
+  background: #a29bfe;
+}

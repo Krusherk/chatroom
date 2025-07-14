@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multisynq Chat</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="chat-container">
+    <div id="chat">
+      <ul id="users"></ul>
+      <div id="messages"></div>
+      <input type="text" id="msg-input" placeholder="Type your message..." />
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <canvas id="three"></canvas> <!-- if you want to add 3D elements later -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/multisynq@latest"></script>
+  <script src="model.js"></script>
+  <script src="view.js"></script>
+  <script>
+    Multisynq.Session.join({
+      apiKey: "2ndohxjGrrkf4wcTbvKV1GzdwPsCqKVVmtg1YqBNsK",
+      appId: "com.chatroom.qowiyy",
+      name: "public",
+      password: "none",
+      model: ChatModel,
+      view: ChatView,
+    });
+  </script>
+</body>
+</html>
