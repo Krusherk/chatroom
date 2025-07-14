@@ -1,33 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Multisynq Chat</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRACKED DEVS Chat</title>
+    <script src="https://cdn.multisynq.io/multisynq-client-0.9.4.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="chat-container">
-    <div id="chat">
-      <ul id="users"></ul>
-      <div id="messages"></div>
-      <input type="text" id="msg-input" placeholder="Type your message..." />
-      <button id="send-btn">Send</button>
-    </div>
-  </div>
+    <header>
+        <h1>CRACKED DEVS</h1>
+    </header>
 
-  <canvas id="three"></canvas> <!-- if you want to add 3D elements later -->
-  
-  <script src="https://cdn.jsdelivr.net/npm/multisynq@latest"></script>
-  <script src="model.js"></script>
-  <script src="view.js"></script>
-  <script>
-    Multisynq.Session.join({
-      apiKey: "2ndohxjGrrkf4wcTbvKV1GzdwPsCqKVVmtg1YqBNsK",
-      appId: "com.chatroom.qowiyy",
-      name: "public",
-      password: "none",
-      model: ChatModel,
-      view: ChatView,
-    });
-  </script>
+    <main>
+        <div class="session-info">
+            <div id="sessionBadge"></div>
+            <div id="userCount">0 users online</div>
+        </div>
+        
+        <div class="chat-container">
+            <div id="chatHistory" class="chat-history"></div>
+            
+            <div class="user-controls">
+                <input type="text" id="usernameInput" placeholder="Choose your username">
+                <button id="setUsername">Set Name</button>
+            </div>
+            
+            <div class="message-input">
+                <input type="text" id="messageInput" placeholder="Type your message..." disabled>
+                <button id="sendButton" disabled>Send</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        made by crack
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
