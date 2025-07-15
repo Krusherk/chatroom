@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clean Chat</title>
+    <title>Real-Time Dev Chat</title>
+    <script src="https://cdn.multisynq.io/multisynq-client-0.9.4.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -575,22 +576,53 @@
                 display: block;
             }
         }
+        
+        /* Connection status */
+        .connection-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .connection-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--danger);
+        }
+        
+        .connection-dot.connected {
+            background-color: var(--success);
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
+        <!-- Connection status indicator -->
+        <div class="connection-status" id="connectionStatus">
+            <div class="connection-dot"></div>
+            <span>Connecting...</span>
+        </div>
+        
         <!-- Onboarding Screens -->
         <div class="onboarding" id="onboarding">
             <div class="onboarding-content">
-                <h2>CLEAN CHAT</h2>
-                <p>Welcome to a fresh chat experience. No pre-filled content, no AI users - just real conversations.</p>
+                <h2>REAL-TIME DEV CHAT</h2>
+                <p>Welcome to the real-time developer chat. Connect with others instantly!</p>
                 
                 <div id="usernameScreen">
                     <div class="input-group">
                         <input type="text" id="usernameInput" placeholder="Choose your username" autocomplete="off">
                     </div>
                     <button class="btn" id="setUsernameBtn">
-                        <i class="fas fa-check"></i> Start Chatting
+                        <i class="fas fa-check"></i> Join Chat
                     </button>
                 </div>
             </div>
@@ -600,16 +632,16 @@
         <header>
             <div class="logo">
                 <i class="fas fa-comments floating"></i>
-                <h1>CLEAN CHAT</h1>
+                <h1>REAL-TIME DEV CHAT</h1>
             </div>
             <div class="session-info">
                 <div class="user-count">
                     <i class="fas fa-users"></i>
-                    <span id="userCount">1 user</span>
+                    <span id="userCount">0 users</span>
                 </div>
                 <div class="session-badge">
                     <i class="fas fa-qrcode"></i>
-                    <span id="sessionCode">NEW-CHAT</span>
+                    <span id="sessionCode">DEV-ROOM</span>
                 </div>
             </div>
         </header>
@@ -623,14 +655,14 @@
                 
                 <div class="room-list">
                     <h3><i class="fas fa-door-open"></i> Chat Rooms</h3>
-                    <div class="room-item active">
+                    <div class="room-item active" data-room="general">
                         <h4><i class="fas fa-hashtag"></i> General</h4>
                         <div class="room-stats">
                             <span><i class="fas fa-comment"></i> <span id="generalMessageCount">0</span></span>
                         </div>
                     </div>
                     
-                    <button class="create-room-btn">
+                    <button class="create-room-btn" id="createRoomBtn">
                         <i class="fas fa-plus"></i> Create New Room
                     </button>
                 </div>
@@ -665,7 +697,7 @@
         </div>
         
         <footer>
-            Clean Chat Interface
+            Real-time chat with MultiSynq
         </footer>
     </div>
 
@@ -683,12 +715,107 @@
             const searchInput = document.getElementById('searchInput');
             const userListContainer = document.getElementById('userListContainer');
             const generalMessageCount = document.getElementById('generalMessageCount');
+            const createRoomBtn = document.getElementById('createRoomBtn');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            // MultiSynq variables
+            let synq = null;
+            let room = null;
+            let messagesRef = null;
+            let usersRef = null;
+            let roomsRef = null;
             
             // Current user
             let currentUser = {
+                id: '',
                 name: "",
-                avatar: ""
+                avatar: "",
+                room: "general"
             };
+            
+            // Initialize MultiSynq connection
+            function initializeMultiSynq() {
+                // Create a unique ID for this user
+                const userId = 'user-' + Math.random().toString(36).substr(2, 9);
+                currentUser.id = userId;
+                
+                // Initialize MultiSynq with demo credentials
+                synq = new MultiSynq({
+                    projectId: 'demo',
+                    authToken: 'demo'
+                });
+                
+                // Update connection status
+                synq.on('connect', () => {
+                    connectionStatus.querySelector('.connection-dot').classList.add('connected');
+                    connectionStatus.querySelector('span').textContent = 'Connected';
+                });
+                
+                synq.on('disconnect', () => {
+                    connectionStatus.querySelector('.connection-dot').classList.remove('connected');
+                    connectionStatus.querySelector('span').textContent = 'Disconnected';
+                });
+                
+                synq.on('reconnect', () => {
+                    connectionStatus.querySelector('span').textContent = 'Reconnecting...';
+                });
+                
+                // Join the main room
+                joinRoom("general");
+            }
+            
+            // Join a chat room
+            function joinRoom(roomId) {
+                // Leave previous room if exists
+                if (room) {
+                    room.leave();
+                }
+                
+                // Join the new room
+                room = synq.join(roomId);
+                currentUser.room = roomId;
+                
+                // Set up messages reference
+                messagesRef = room.ref('messages');
+                messagesRef.on('change', (messages) => {
+                    renderMessages(messages);
+                    // Update message count for this room
+                    if (roomId === "general") {
+                        generalMessageCount.textContent = messages ? messages.length : 0;
+                    }
+                });
+                
+                // Set up users reference
+                usersRef = room.ref('users');
+                usersRef.on('change', (users) => {
+                    renderUsers(users);
+                    userCount.textContent = users ? `${users.length} users` : "0 users";
+                });
+                
+                // Set up rooms reference
+                roomsRef = synq.ref('rooms');
+                roomsRef.on('change', (rooms) => {
+                    renderRooms(rooms);
+                });
+                
+                // Add current user to the room
+                usersRef.transaction((users) => {
+                    if (!users) users = [];
+                    
+                    // Check if user already exists
+                    const existingUserIndex = users.findIndex(u => u.id === currentUser.id);
+                    
+                    if (existingUserIndex === -1) {
+                        // Add new user
+                        users.push(currentUser);
+                    } else {
+                        // Update existing user
+                        users[existingUserIndex] = currentUser;
+                    }
+                    
+                    return users;
+                });
+            }
             
             // Set username
             setUsernameBtn.addEventListener('click', function() {
@@ -700,15 +827,15 @@
                     // Hide onboarding and show chat interface
                     onboarding.classList.add('hidden');
                     
+                    // Initialize MultiSynq connection
+                    initializeMultiSynq();
+                    
                     // Generate session code
                     const code = generateSessionCode();
                     sessionCode.textContent = code;
                     
-                    // Add current user to user list
-                    addUserToUserList(currentUser);
-                    
                     // Add welcome message
-                    addSystemMessage(`Welcome to Clean Chat, ${username}! This is a fresh chat with no pre-filled content.`);
+                    addSystemMessage(`Welcome to Real-Time Dev Chat, ${username}!`);
                     
                     // Focus on message input
                     messageInput.focus();
@@ -721,13 +848,28 @@
             // Send message
             function sendMessage() {
                 const message = messageInput.value.trim();
-                if (message) {
-                    addMessage(currentUser, message, true);
-                    messageInput.value = "";
-                    messageInput.focus();
+                if (message && messagesRef) {
+                    const now = new Date();
+                    const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                                 now.getMinutes().toString().padStart(2, '0');
                     
-                    // Update message count
-                    updateMessageCount();
+                    const messageObj = {
+                        id: 'msg-' + Date.now(),
+                        user: currentUser,
+                        text: message,
+                        time: time,
+                        timestamp: Date.now()
+                    };
+                    
+                    // Add to messages
+                    messagesRef.transaction((messages) => {
+                        if (!messages) messages = [];
+                        messages.push(messageObj);
+                        return messages;
+                    });
+                    
+                    // Clear input
+                    messageInput.value = "";
                 }
             }
             
@@ -741,57 +883,134 @@
                 }
             });
             
-            // Search functionality
-            searchInput.addEventListener('input', function() {
-                const searchTerm = searchInput.value.toLowerCase();
-                if (searchTerm) {
-                    // In a real app, this would filter messages
-                    console.log("Searching for:", searchTerm);
+            // Create room button
+            createRoomBtn.addEventListener('click', function() {
+                const roomName = prompt("Enter a name for your new room:");
+                if (roomName) {
+                    const roomId = roomName.toLowerCase().replace(/\s+/g, '-');
+                    
+                    // Create room in the global rooms list
+                    roomsRef.transaction((rooms) => {
+                        if (!rooms) rooms = [];
+                        
+                        // Check if room already exists
+                        if (!rooms.some(r => r.id === roomId)) {
+                            rooms.push({
+                                id: roomId,
+                                name: roomName,
+                                messageCount: 0
+                            });
+                        }
+                        
+                        return rooms;
+                    });
+                    
+                    // Join the new room
+                    joinRoom(roomId);
+                    
+                    // Alert user
+                    addSystemMessage(`Created and joined new room: ${roomName}`);
                 }
             });
             
-            // Create room button
-            document.querySelector('.create-room-btn').addEventListener('click', function() {
-                const roomName = prompt("Enter a name for your new room:");
-                if (roomName) {
-                    // Create room item
-                    const roomList = document.querySelector('.room-list');
+            // Render messages to chat
+            function renderMessages(messages) {
+                if (!messages) return;
+                
+                // Clear chat history
+                chatHistory.innerHTML = '';
+                
+                // Sort messages by timestamp
+                messages.sort((a, b) => a.timestamp - b.timestamp);
+                
+                // Add each message
+                messages.forEach(message => {
+                    const isCurrentUser = message.user.id === currentUser.id;
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${isCurrentUser ? 'user-message' : 'other-message'}`;
+                    
+                    messageDiv.innerHTML = `
+                        <div class="message-username">
+                            <i class="fas fa-user"></i>${message.user.name}
+                        </div>
+                        <div class="message-text">${message.text}</div>
+                        <div class="message-time">${message.time}</div>
+                    `;
+                    
+                    chatHistory.appendChild(messageDiv);
+                });
+                
+                // Scroll to bottom
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+            
+            // Render users to user list
+            function renderUsers(users) {
+                if (!users) return;
+                
+                // Clear user list
+                userListContainer.innerHTML = '';
+                
+                // Add each user
+                users.forEach(user => {
+                    const userItem = document.createElement('div');
+                    userItem.className = 'user-item';
+                    userItem.innerHTML = `
+                        <div class="user-avatar">${user.avatar}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-status">
+                                <div class="status-indicator"></div>
+                                Online
+                            </div>
+                        </div>
+                    `;
+                    userListContainer.appendChild(userItem);
+                });
+            }
+            
+            // Render rooms to sidebar
+            function renderRooms(rooms) {
+                if (!rooms) return;
+                
+                const roomList = document.querySelector('.room-list');
+                const createBtn = document.querySelector('.create-room-btn');
+                
+                // Clear existing rooms (except the create button)
+                document.querySelectorAll('.room-item').forEach(el => el.remove());
+                
+                // Add each room
+                rooms.forEach(roomData => {
+                    const isActive = roomData.id === currentUser.room;
                     const roomItem = document.createElement('div');
-                    roomItem.className = 'room-item';
+                    roomItem.className = `room-item ${isActive ? 'active' : ''}`;
+                    roomItem.dataset.room = roomData.id;
                     roomItem.innerHTML = `
-                        <h4><i class="fas fa-hashtag"></i> ${roomName}</h4>
+                        <h4><i class="fas fa-hashtag"></i> ${roomData.name}</h4>
                         <div class="room-stats">
-                            <span><i class="fas fa-comment"></i> 0</span>
+                            <span><i class="fas fa-comment"></i> ${roomData.messageCount || 0}</span>
                         </div>
                     `;
                     
-                    // Insert before the create button
-                    roomList.insertBefore(roomItem, document.querySelector('.create-room-btn'));
+                    // Add click event to join room
+                    roomItem.addEventListener('click', () => {
+                        if (roomData.id !== currentUser.room) {
+                            joinRoom(roomData.id);
+                            document.querySelector('.chat-header h2').innerHTML = 
+                                `<i class="fas fa-hashtag"></i> ${roomData.name} Chat`;
+                            
+                            // Update active room
+                            document.querySelectorAll('.room-item').forEach(el => {
+                                el.classList.remove('active');
+                            });
+                            roomItem.classList.add('active');
+                            
+                            addSystemMessage(`Joined room: ${roomData.name}`);
+                        }
+                    });
                     
-                    // Alert user
-                    addSystemMessage(`Created new room: ${roomName}`);
-                }
-            });
-            
-            // Add message to chat
-            function addMessage(user, text, isCurrentUser) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${isCurrentUser ? 'user-message' : 'other-message'}`;
-                
-                const now = new Date();
-                const time = now.getHours().toString().padStart(2, '0') + ':' + 
-                             now.getMinutes().toString().padStart(2, '0');
-                
-                messageDiv.innerHTML = `
-                    <div class="message-username">
-                        <i class="fas fa-user"></i>${user.name}
-                    </div>
-                    <div class="message-text">${text}</div>
-                    <div class="message-time">${time}</div>
-                `;
-                
-                chatHistory.appendChild(messageDiv);
-                chatHistory.scrollTop = chatHistory.scrollHeight;
+                    roomList.insertBefore(roomItem, createBtn);
+                });
             }
             
             // Add system message
@@ -801,29 +1020,6 @@
                 messageDiv.innerHTML = `<div class="message-text">${text}</div>`;
                 chatHistory.appendChild(messageDiv);
                 chatHistory.scrollTop = chatHistory.scrollHeight;
-            }
-            
-            // Add user to user list
-            function addUserToUserList(user) {
-                const userItem = document.createElement('div');
-                userItem.className = 'user-item';
-                userItem.innerHTML = `
-                    <div class="user-avatar">${user.avatar}</div>
-                    <div class="user-info">
-                        <div class="user-name">${user.name}</div>
-                        <div class="user-status">
-                            <div class="status-indicator"></div>
-                            Online
-                        </div>
-                    </div>
-                `;
-                userListContainer.appendChild(userItem);
-            }
-            
-            // Update message count
-            function updateMessageCount() {
-                const currentCount = parseInt(generalMessageCount.textContent);
-                generalMessageCount.textContent = currentCount + 1;
             }
             
             // Generate session code
@@ -848,7 +1044,7 @@
             // Initialize with welcome message
             setTimeout(() => {
                 if (!onboarding.classList.contains('hidden')) {
-                    addSystemMessage("Welcome to Clean Chat! Enter a username to start chatting.");
+                    addSystemMessage("Welcome to Real-Time Dev Chat! Enter a username to start chatting.");
                 }
             }, 500);
         });
