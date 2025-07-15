@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRACKED DEVS Chat</title>
-    <script src="https://cdn.multisynq.io/multisynq-client-0.9.4.min.js"></script>
+    <title>Clean Chat</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -583,15 +582,15 @@
         <!-- Onboarding Screens -->
         <div class="onboarding" id="onboarding">
             <div class="onboarding-content">
-                <h2>CRACKED DEVS</h2>
-                <p>Welcome to the ultimate developer chat experience. Connect with fellow developers in real-time!</p>
+                <h2>CLEAN CHAT</h2>
+                <p>Welcome to a fresh chat experience. No pre-filled content, no AI users - just real conversations.</p>
                 
                 <div id="usernameScreen">
                     <div class="input-group">
                         <input type="text" id="usernameInput" placeholder="Choose your username" autocomplete="off">
                     </div>
                     <button class="btn" id="setUsernameBtn">
-                        <i class="fas fa-check"></i> Continue to Chat
+                        <i class="fas fa-check"></i> Start Chatting
                     </button>
                 </div>
             </div>
@@ -600,17 +599,17 @@
         <!-- Main App Interface (hidden initially) -->
         <header>
             <div class="logo">
-                <i class="fas fa-terminal floating"></i>
-                <h1>CRACKED DEVS</h1>
+                <i class="fas fa-comments floating"></i>
+                <h1>CLEAN CHAT</h1>
             </div>
             <div class="session-info">
                 <div class="user-count">
                     <i class="fas fa-users"></i>
-                    <span id="userCount">0 users</span>
+                    <span id="userCount">1 user</span>
                 </div>
                 <div class="session-badge">
                     <i class="fas fa-qrcode"></i>
-                    <span id="sessionCode">DEV-ROOM</span>
+                    <span id="sessionCode">NEW-CHAT</span>
                 </div>
             </div>
         </header>
@@ -619,7 +618,7 @@
             <div class="sidebar">
                 <div class="search-container">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search users or messages...">
+                    <input type="text" id="searchInput" placeholder="Search messages...">
                 </div>
                 
                 <div class="room-list">
@@ -627,36 +626,7 @@
                     <div class="room-item active">
                         <h4><i class="fas fa-hashtag"></i> General</h4>
                         <div class="room-stats">
-                            <span><i class="fas fa-users"></i> 12 members</span>
-                            <span><i class="fas fa-comment"></i> 128</span>
-                        </div>
-                    </div>
-                    <div class="room-item">
-                        <h4><i class="fas fa-hashtag"></i> JavaScript</h4>
-                        <div class="room-stats">
-                            <span><i class="fas fa-users"></i> 8 members</span>
-                            <span><i class="fas fa-comment"></i> 42</span>
-                        </div>
-                    </div>
-                    <div class="room-item">
-                        <h4><i class="fas fa-hashtag"></i> Python</h4>
-                        <div class="room-stats">
-                            <span><i class="fas fa-users"></i> 6 members</span>
-                            <span><i class="fas fa-comment"></i> 27</span>
-                        </div>
-                    </div>
-                    <div class="room-item">
-                        <h4><i class="fas fa-hashtag"></i> Web Design</h4>
-                        <div class="room-stats">
-                            <span><i class="fas fa-users"></i> 5 members</span>
-                            <span><i class="fas fa-comment"></i> 19</span>
-                        </div>
-                    </div>
-                    <div class="room-item">
-                        <h4><i class="fas fa-hashtag"></i> DevOps</h4>
-                        <div class="room-stats">
-                            <span><i class="fas fa-users"></i> 7 members</span>
-                            <span><i class="fas fa-comment"></i> 35</span>
+                            <span><i class="fas fa-comment"></i> <span id="generalMessageCount">0</span></span>
                         </div>
                     </div>
                     
@@ -688,61 +658,14 @@
             
             <div class="user-list">
                 <h3><i class="fas fa-users"></i> Online Users</h3>
-                <div class="user-item">
-                    <div class="user-avatar">JD</div>
-                    <div class="user-info">
-                        <div class="user-name">JohnDev</div>
-                        <div class="user-status">
-                            <div class="status-indicator"></div>
-                            Online
-                        </div>
-                    </div>
-                </div>
-                <div class="user-item">
-                    <div class="user-avatar">SC</div>
-                    <div class="user-info">
-                        <div class="user-name">SarahCoder</div>
-                        <div class="user-status">
-                            <div class="status-indicator"></div>
-                            Online
-                        </div>
-                    </div>
-                </div>
-                <div class="user-item">
-                    <div class="user-avatar">MJ</div>
-                    <div class="user-info">
-                        <div class="user-name">MikeJS</div>
-                        <div class="user-status">
-                            <div class="status-indicator"></div>
-                            Online
-                        </div>
-                    </div>
-                </div>
-                <div class="user-item">
-                    <div class="user-avatar">AP</div>
-                    <div class="user-info">
-                        <div class="user-name">AlexPy</div>
-                        <div class="user-status">
-                            <div class="status-indicator"></div>
-                            Online
-                        </div>
-                    </div>
-                </div>
-                <div class="user-item">
-                    <div class="user-avatar">CR</div>
-                    <div class="user-info">
-                        <div class="user-name">CrackedDev</div>
-                        <div class="user-status">
-                            <div class="status-indicator"></div>
-                            Online
-                        </div>
-                    </div>
+                <div id="userListContainer">
+                    <!-- Users will be added dynamically -->
                 </div>
             </div>
         </div>
         
         <footer>
-            made by crack
+            Clean Chat Interface
         </footer>
     </div>
 
@@ -758,24 +681,8 @@
             const userCount = document.getElementById('userCount');
             const sessionCode = document.getElementById('sessionCode');
             const searchInput = document.getElementById('searchInput');
-            
-            // Sample chat rooms
-            const rooms = [
-                { id: 1, name: "General", members: 12, messages: 128 },
-                { id: 2, name: "JavaScript", members: 8, messages: 42 },
-                { id: 3, name: "Python", members: 6, messages: 27 },
-                { id: 4, name: "Web Design", members: 5, messages: 19 },
-                { id: 5, name: "DevOps", members: 7, messages: 35 }
-            ];
-            
-            // Sample users
-            const users = [
-                { id: 1, name: "JohnDev", avatar: "JD", status: "online" },
-                { id: 2, name: "SarahCoder", avatar: "SC", status: "online" },
-                { id: 3, name: "MikeJS", avatar: "MJ", status: "online" },
-                { id: 4, name: "AlexPy", avatar: "AP", status: "online" },
-                { id: 5, name: "CrackedDev", avatar: "CR", status: "online" }
-            ];
+            const userListContainer = document.getElementById('userListContainer');
+            const generalMessageCount = document.getElementById('generalMessageCount');
             
             // Current user
             let currentUser = {
@@ -793,15 +700,15 @@
                     // Hide onboarding and show chat interface
                     onboarding.classList.add('hidden');
                     
-                    // Generate random session code
+                    // Generate session code
                     const code = generateSessionCode();
                     sessionCode.textContent = code;
                     
-                    // Set user count
-                    userCount.textContent = users.length + " users";
+                    // Add current user to user list
+                    addUserToUserList(currentUser);
                     
                     // Add welcome message
-                    addSystemMessage(`Welcome to CRACKED DEVS, ${username}! Start chatting now.`);
+                    addSystemMessage(`Welcome to Clean Chat, ${username}! This is a fresh chat with no pre-filled content.`);
                     
                     // Focus on message input
                     messageInput.focus();
@@ -819,20 +726,8 @@
                     messageInput.value = "";
                     messageInput.focus();
                     
-                    // Simulate responses
-                    setTimeout(() => {
-                        const randomUser = users[Math.floor(Math.random() * users.length)];
-                        const responses = [
-                            "Interesting! What do you think about the new framework updates?",
-                            "I've been working on something similar. We should collaborate!",
-                            "That's a great point. Have you considered the performance implications?",
-                            "I've encountered that issue before. The solution is to clear cache.",
-                            "Check out the documentation for that, it has some great examples.",
-                            "We should schedule a meeting to discuss this further."
-                        ];
-                        const response = responses[Math.floor(Math.random() * responses.length)];
-                        addMessage(randomUser, response, false);
-                    }, 1000 + Math.random() * 2000);
+                    // Update message count
+                    updateMessageCount();
                 }
             }
             
@@ -850,36 +745,32 @@
             searchInput.addEventListener('input', function() {
                 const searchTerm = searchInput.value.toLowerCase();
                 if (searchTerm) {
-                    // In a real app, this would filter messages or users
+                    // In a real app, this would filter messages
                     console.log("Searching for:", searchTerm);
                 }
             });
             
             // Create room button
             document.querySelector('.create-room-btn').addEventListener('click', function() {
-                const newRoom = {
-                    id: rooms.length + 1,
-                    name: `Room ${rooms.length + 1}`,
-                    members: 1,
-                    messages: 0
-                };
-                rooms.push(newRoom);
-                
-                // Add room to list
-                const roomList = document.querySelector('.room-list');
-                const roomItem = document.createElement('div');
-                roomItem.className = 'room-item';
-                roomItem.innerHTML = `
-                    <h4><i class="fas fa-hashtag"></i> ${newRoom.name}</h4>
-                    <div class="room-stats">
-                        <span><i class="fas fa-users"></i> ${newRoom.members} members</span>
-                        <span><i class="fas fa-comment"></i> ${newRoom.messages}</span>
-                    </div>
-                `;
-                roomList.insertBefore(roomItem, document.querySelector('.create-room-btn'));
-                
-                // Alert user
-                addSystemMessage(`Created new room: ${newRoom.name}`);
+                const roomName = prompt("Enter a name for your new room:");
+                if (roomName) {
+                    // Create room item
+                    const roomList = document.querySelector('.room-list');
+                    const roomItem = document.createElement('div');
+                    roomItem.className = 'room-item';
+                    roomItem.innerHTML = `
+                        <h4><i class="fas fa-hashtag"></i> ${roomName}</h4>
+                        <div class="room-stats">
+                            <span><i class="fas fa-comment"></i> 0</span>
+                        </div>
+                    `;
+                    
+                    // Insert before the create button
+                    roomList.insertBefore(roomItem, document.querySelector('.create-room-btn'));
+                    
+                    // Alert user
+                    addSystemMessage(`Created new room: ${roomName}`);
+                }
             });
             
             // Add message to chat
@@ -912,6 +803,29 @@
                 chatHistory.scrollTop = chatHistory.scrollHeight;
             }
             
+            // Add user to user list
+            function addUserToUserList(user) {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                userItem.innerHTML = `
+                    <div class="user-avatar">${user.avatar}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-status">
+                            <div class="status-indicator"></div>
+                            Online
+                        </div>
+                    </div>
+                `;
+                userListContainer.appendChild(userItem);
+            }
+            
+            // Update message count
+            function updateMessageCount() {
+                const currentCount = parseInt(generalMessageCount.textContent);
+                generalMessageCount.textContent = currentCount + 1;
+            }
+            
             // Generate session code
             function generateSessionCode() {
                 const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -931,30 +845,12 @@
                 return code;
             }
             
-            // Add some initial messages
-            function initializeChat() {
-                setTimeout(() => {
-                    addSystemMessage("Welcome to CRACKED DEVS chat! Type a message to get started.");
-                    addSystemMessage("There are 5 users online now.");
-                    
-                    setTimeout(() => {
-                        addMessage(users[0], "Hey everyone, how's it going? Just pushed the latest update to the repo.", false);
-                        
-                        setTimeout(() => {
-                            addMessage(users[1], "Nice! I'll check it out. Did you fix the responsive issues on mobile?", false);
-                            
-                            setTimeout(() => {
-                                addMessage(users[4], "The mobile issues should be resolved in this version. Let me know if you find anything!", false);
-                            }, 1000);
-                        }, 1500);
-                    }, 1000);
-                }, 500);
-            }
-            
-            // Initialize chat after onboarding
-            if (!onboarding.classList.contains('hidden')) {
-                setTimeout(initializeChat, 1000);
-            }
+            // Initialize with welcome message
+            setTimeout(() => {
+                if (!onboarding.classList.contains('hidden')) {
+                    addSystemMessage("Welcome to Clean Chat! Enter a username to start chatting.");
+                }
+            }, 500);
         });
     </script>
 </body>
